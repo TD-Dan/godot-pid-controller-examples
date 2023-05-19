@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://cdv6g81fpvljt"]
+
+[node name="Main" type="Node2D"]
+
+[node name="Target" type="Node2D" parent="."]
+unique_name_in_owner = true
