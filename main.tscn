@@ -1,6 +1,149 @@
-[gd_scene format=3 uid="uid://cdv6g81fpvljt"]
+[gd_scene load_steps=11 format=3 uid="uid://cdv6g81fpvljt"]
 
-[node name="Main" type="Node2D"]
+[ext_resource type="Script" path="res://main.gd" id="1_c0c7y"]
+[ext_resource type="Texture2D" uid="uid://ca7lxniigc14d" path="res://res/creature-sheet.png" id="2_n6u4i"]
+[ext_resource type="Texture2D" uid="uid://br02ol1rwvmc2" path="res://res/crosshair192.png" id="3_jtxsd"]
 
-[node name="Target" type="Node2D" parent="."]
+[sub_resource type="AtlasTexture" id="AtlasTexture_rv1gx"]
+atlas = ExtResource("2_n6u4i")
+region = Rect2(0, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_04s7f"]
+atlas = ExtResource("2_n6u4i")
+region = Rect2(24, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c08t8"]
+atlas = ExtResource("2_n6u4i")
+region = Rect2(48, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dyien"]
+atlas = ExtResource("2_n6u4i")
+region = Rect2(72, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2cnxy"]
+atlas = ExtResource("2_n6u4i")
+region = Rect2(24, 0, 24, 24)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_07qhn"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rv1gx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_04s7f")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_c08t8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dyien")
+}],
+"loop": true,
+"name": &"crabbed",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2cnxy")
+}],
+"loop": true,
+"name": &"standing",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_5pvx4"]
+radius = 13.0
+height = 40.0
+
+[node name="Master" type="Node"]
+
+[node name="UI" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI"]
+layout_mode = 2
+
+[node name="GridContainer" type="GridContainer" parent="UI/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/h_separation = 10
+columns = 2
+
+[node name="Label_P" type="Label" parent="UI/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Proportional"
+
+[node name="SpinBox_P" type="SpinBox" parent="UI/VBoxContainer/GridContainer"]
 unique_name_in_owner = true
+layout_mode = 2
+max_value = 10000.0
+
+[node name="Label_I" type="Label" parent="UI/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Integral"
+
+[node name="SpinBox_I" type="SpinBox" parent="UI/VBoxContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 1000.0
+step = 0.1
+
+[node name="Label_D" type="Label" parent="UI/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Derivative"
+
+[node name="SpinBox_D" type="SpinBox" parent="UI/VBoxContainer/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+step = 0.01
+
+[node name="Button" type="Button" parent="UI/VBoxContainer/GridContainer"]
+layout_mode = 2
+text = "Reset"
+
+[node name="Main" type="Node2D" parent="."]
+script = ExtResource("1_c0c7y")
+
+[node name="Target" type="CharacterBody2D" parent="Main"]
+unique_name_in_owner = true
+position = Vector2(644, 354)
+input_pickable = true
+metadata/_edit_group_ = true
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Main/Target"]
+texture_filter = 1
+texture_repeat = 1
+scale = Vector2(2, 2)
+sprite_frames = SubResource("SpriteFrames_07qhn")
+animation = &"standing"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Main/Target"]
+position = Vector2(0, 5)
+shape = SubResource("CapsuleShape2D_5pvx4")
+
+[node name="Follower" type="Node2D" parent="Main"]
+unique_name_in_owner = true
+position = Vector2(509, 138)
+metadata/_edit_group_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="Main/Follower"]
+texture = ExtResource("3_jtxsd")
+
+[node name="Sprite2D2" type="Sprite2D" parent="Main/Follower"]
+rotation = 1.5708
+texture = ExtResource("3_jtxsd")
+
+[connection signal="value_changed" from="UI/VBoxContainer/GridContainer/SpinBox_P" to="Main" method="_on_spin_box_p_value_changed"]
+[connection signal="value_changed" from="UI/VBoxContainer/GridContainer/SpinBox_I" to="Main" method="_on_spin_box_i_value_changed"]
+[connection signal="value_changed" from="UI/VBoxContainer/GridContainer/SpinBox_D" to="Main" method="_on_spin_box_d_value_changed"]
+[connection signal="pressed" from="UI/VBoxContainer/GridContainer/Button" to="Main" method="_on_button_pressed"]
+[connection signal="input_event" from="Main/Target" to="Main" method="_on_target_input_event"]
